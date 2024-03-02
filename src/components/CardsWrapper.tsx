@@ -3,8 +3,9 @@
 import { Box, Container, Typography, Button } from '@mui/material'
 import React, { useState } from 'react'
 import CardItem from './CardItem'
-import { IUser, useGetAllUsersQuery } from '@/app/(redux)/api';
+import { useGetAllUsersQuery } from '@/app/(redux)/api';
 import Loading from '@/app/loading';
+import { IUser } from '@/types/types';
 
 
 const CardsWrapper = () => {
@@ -28,7 +29,7 @@ const CardsWrapper = () => {
             <Container>
                 <Typography variant="h1" color="initial">Working with GET request</Typography>
 
-                <Box mt={12.5} display={'grid'} gap={7} gridTemplateColumns={'repeat(3, minmax(0, 1fr))'}>
+                <Box mt={12.5} display={'grid'} gap={7} gridTemplateColumns={{ xs: 'repeat(1, minmax(0, 1fr))', sm: 'repeat(2, minmax(0, 1fr))', md: 'repeat(3, minmax(0, 1fr))' }}>
                     {data && data.users.map((user: IUser) => (
                         <CardItem key={user.id} user={user} />
                     ))}

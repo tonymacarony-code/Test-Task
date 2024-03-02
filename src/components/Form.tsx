@@ -8,49 +8,77 @@ import { FormInputRadio } from "./FormElements/FormInputRadio";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import FormUploadPhoto from "./FormElements/FormUploadPhoto";
+import validator from "validator";
 
+
+function getExtension(filename: string = '') {
+    return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
+}
 
 // Define validation schema using yup
 export const validationSchema = yup.object().shape({
-    Name: yup.string().required().min(2).max(60).required(),
-    Email: yup.string().email('Please enter a valid email address').required('Email is required'),
-    Phone: yup.string().matches(/^(\+380)((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/, 'Phone number must be valid and started with +380').required().min(13).max(13).required(),
-    Position: yup.string().required(),
-    // Photo: yup.mixed(),
+    Name: yup.string().required().min(2).max(60),
+    Email: yup.string()
+        .email()
+        .required()
+        .test((value) => validator.isEmail(value)),
+    Phone: yup.string()
+        .required()
+        .test((value) => validator.isMobilePhone(value, 'uk-UA')),
+    Position: yup.string()
+        .required()
+        .notOneOf(["", undefined], "Position is required"),
+    Photo: yup.mixed()
+        .test({
+            message: 'Please provide a supported file type',
+            test: (file: any, context) => {
+                const isValid = ['png', 'jpg', 'jpeg'].includes(getExtension(file?.name));
+                console.log(isValid)
+                if (!isValid) context?.createError();
+                return isValid;
+            }
+        })
+
 });
 
-interface IFormInput {
-    Name: string;
-    Email: string;
-    Phone: string;
-    Position: string;
-    // Photo: any;
+enum Fields {
+    NAME = 'Name',
+    EMAIL = 'Email',
+    PHONE = 'Phone',
+    POSITION = 'Position',
+    PHOTO = 'Photo'
 }
 
+
 export const Form = () => {
-    const { handleSubmit, control, formState: { errors } } = useForm<IFormInput>({
+    const { handleSubmit, control, formState } = useForm({
         resolver: yupResolver(validationSchema),
         mode: 'onChange',
     });
 
-    const onSubmit = (data: IFormInput) => {
+    // !!!
+    const onSubmit = (data: any) => {
         console.log('clicked');
-
         console.log(data);
     };
 
     return (
         <>
             <Box width="100%" display="flex" flexDirection="column" alignItems="center" justifyContent="center" alignSelf="center">
-                <FormInputText name="Name" control={control} label="Name" />
-                <FormInputText name="Email" control={control} label="Email" />
-                <FormInputText name="Phone" control={control} label="Phone" helperText="+38 (XXX) XXX - XX - XX" />
+                <FormInputText name={Fields.NAME} control={control} label={Fields.NAME} />
+                <FormInputText name={Fields.EMAIL} control={control} label={Fields.EMAIL} />
+                <FormInputText name={Fields.PHONE} control={control} label={Fields.PHONE} helperText="+38 (XXX) XXX - XX - XX" />
                 <Box maxWidth="380px" width="100%" display="flex" justifyContent="flex-start">
-                    <FormInputRadio name="position" control={control} label="Position" />
+                    <FormInputRadio name={Fields.POSITION} control={control} label={Fields.POSITION} />
                 </Box>
-                <FormUploadPhoto name='Photo' control={control} label={'Photo'} />
-                <Button onClick={handleSubmit(onSubmit)} variant="contained">
-                    Submit
+                <FormUploadPhoto name={Fields.PHOTO} control={control} label={Fields.PHOTO} />
+                <Button
+                    sx={{ marginTop: 12.5 }}
+                    onClick={handleSubmit(onSubmit)}
+                    variant="contained"
+                    disabled={!formState.isValid}
+                >
+                    Sign up
                 </Button>
             </Box>
         </>

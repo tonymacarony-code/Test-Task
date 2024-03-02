@@ -7,12 +7,13 @@ interface IHeroProps { }
 
 const Hero: FC<IHeroProps> = () => {
     return (
-        <Container>
+        <Container disableGutters>
             <Box
+                px={4}
                 display={'flex'}
                 justifyContent={'center'}
                 alignItems={'center'}
-                sx={{ minHeight: '650px', position: 'relative', objectFit: 'cover' }}
+                sx={{ minHeight: { xs: '500px', md: '650px' }, position: 'relative', objectFit: 'cover' }}
             >
 
                 <Box
@@ -29,7 +30,7 @@ const Hero: FC<IHeroProps> = () => {
 
                 <Box maxWidth={'380px'} textAlign={'center'} sx={{ zIndex: 1 }}>
                     <Typography component={'h1'} variant="h1" color="white">Test assignment for front-end developer</Typography>
-                    <Typography mt={5} component={'p'} variant="body1" color="white">What defines a good front-end developer is one that has skilled knowledge of HTML, CSS, JS with a vast understanding of User design thinking as they'll be building web interfaces with accessibility in mind. They should also be excited to learn, as the world of Front-End Development keeps evolving.</Typography>
+                    <Typography mt={5} component={'p'} variant="body1" color="white">What defines a good front-end developer is one that has skilled knowledge of HTML, CSS, JS with a vast understanding of User design thinking as they&apos;ll be building web interfaces with accessibility in mind. They should also be excited to learn, as the world of Front-End Development keeps evolving.</Typography>
                     <Box mt={8}>
                         <Button variant="contained" color="primary">
                             Sign up

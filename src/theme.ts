@@ -51,11 +51,9 @@ const theme = createTheme({
     },
     components: {
         MuiContainer: {
-
             defaultProps: {
                 'maxWidth': 'xl'
             },
-
         },
         MuiButton: {
             defaultProps: {

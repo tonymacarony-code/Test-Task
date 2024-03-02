@@ -1,19 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { BASE_URL } from './base_url';
+import { BASE_URL, COUNT_PER_PAGE } from './constants';
 
 
-export interface IUser {
-    id: number;
-    name: string;
-    email: string;
-    phone: string;
-    position: string;
-    position_id: number;
-    registration_timestamp: number;
-    photo: string;
-}
 
-const COUNT_PER_PAGE = 6
+
 
 
 export const api = createApi({
@@ -40,9 +30,15 @@ export const api = createApi({
                 return currentArg !== previousArg;
             }
         }),
+        getPositions: builder.query({
+            query: () => ({
+                url: '/positions',
+                method: 'GET'
+            })
+        })
 
 
     }),
 });
 
-export const { useGetAllUsersQuery } = api;
+export const { useGetAllUsersQuery, useGetPositionsQuery } = api;
