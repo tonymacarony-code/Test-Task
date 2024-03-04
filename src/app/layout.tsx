@@ -3,8 +3,13 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from '@/theme';
-import { Provider } from 'react-redux';
 import StoreProvider from './StoreProvider';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Test Task',
+  description: 'Test Task for abz.agency by Tony Bodniev',
+};
 
 
 export default function RootLayout(props: { children: React.ReactNode }) {

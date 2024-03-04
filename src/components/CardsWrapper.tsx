@@ -6,12 +6,14 @@ import CardItem from './CardItem'
 import { useGetAllUsersQuery } from '@/app/(redux)/api';
 import Loading from '@/app/loading';
 import { IUser } from '@/types/types';
+import { useAppDispatch, useAppSelector } from '@/app/(redux)/hooks';
+import { selectCurrentPage, setCurrentPage } from '@/app/(redux)/currentPageSlice';
 
 
 const CardsWrapper = () => {
 
-    const [currentPage, setCurrentPage] = useState(0)
-
+    const currentPage = useAppSelector(selectCurrentPage)
+    const dispatch = useAppDispatch()
     const { data: res, isLoading } = useGetAllUsersQuery(currentPage);
     const data = res ?? []
 
@@ -20,7 +22,7 @@ const CardsWrapper = () => {
     }
 
     const LoadMore = () => {
-        setCurrentPage(currentPage + 1)
+        dispatch(setCurrentPage(currentPage + 1))
     }
 
     const isFullList = (data.total_pages || 1) !== (currentPage + 1);

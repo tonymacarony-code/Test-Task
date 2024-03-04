@@ -1,12 +1,13 @@
 
 import { configureStore } from '@reduxjs/toolkit'
 import { api } from './api'
-import { setupListeners } from '@reduxjs/toolkit/query';
 import { postApi } from './postApi';
+import currentPageSlice from './currentPageSlice';
 
 export const store = () => {
     return configureStore({
         reducer: {
+            currentPage: currentPageSlice,
             [api.reducerPath]: api.reducer,
             [postApi.reducerPath]: postApi.reducer
         },

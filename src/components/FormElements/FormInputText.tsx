@@ -1,6 +1,8 @@
 import { Controller } from "react-hook-form";
 import TextField from "@mui/material/TextField";
-import { FormInputProps } from "./FormInputProps";
+
+import { Fields, FormInputProps } from "@/types/types";
+
 
 export const FormInputText = ({ name, control, label, helperText }: FormInputProps) => {
 
@@ -14,14 +16,14 @@ export const FormInputText = ({ name, control, label, helperText }: FormInputPro
                 formState,
             }) => (
                 <TextField
-                    helperText={error ? error.message : name === 'Phone' ? helperText : null}
+                    helperText={error ? error.message : name === Fields.PHONE ? helperText : null}
                     error={!!error}
                     onChange={onChange}
                     value={value || ''}
                     fullWidth
                     label={label}
                     variant="outlined"
-                    sx={{ mt: 12.5 }}
+                    sx={{ mt: 12.5, '& .MuiFormLabel-root': { textTransform: 'capitalize' }, '& .Mui-error': { ":first-letter": { textTransform: 'uppercase' } } }}
                     required
                 />
             )}

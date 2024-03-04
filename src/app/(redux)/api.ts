@@ -1,11 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { BASE_URL, COUNT_PER_PAGE } from './constants';
 
-
-
-
-
-
 export const api = createApi({
     reducerPath: 'api',
     baseQuery: fetchBaseQuery({
@@ -28,14 +23,17 @@ export const api = createApi({
             // Refetch when the page arg changes
             forceRefetch({ currentArg, previousArg }) {
                 return currentArg !== previousArg;
-            }
+            },
+
         }),
+
         getPositions: builder.query({
             query: () => ({
                 url: '/positions',
                 method: 'GET'
             })
-        })
+        }),
+
 
 
     }),

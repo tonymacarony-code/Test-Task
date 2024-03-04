@@ -14,7 +14,7 @@ const CardItem: FC<ICardProps> = ({ user }) => {
             <Image width={70} height={70} src={user.photo} style={{ borderRadius: '50%' }} alt='avatar' />
             <Typography mt={5} variant="body1" color="initial">{user.name}</Typography>
             <Typography mt={5} variant="body1" color="initial">{user.position}</Typography>
-            <Tooltip title={user.email} placement="bottom-end">
+            <Tooltip title={user.email} placement="bottom">
                 <Link
                     component={'a'}
                     color={'inherit'}

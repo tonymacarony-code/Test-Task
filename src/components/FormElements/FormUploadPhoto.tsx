@@ -1,19 +1,17 @@
-import React, { useState, useRef, FC, ChangeEvent } from 'react';
+import React, { useRef, FC, ChangeEvent } from 'react';
 import { Controller, ControllerRenderProps, FieldValues } from 'react-hook-form';
 import { Box, Button, InputLabel, Typography } from '@mui/material';
-import { FormInputProps } from './FormInputProps';
+import { FormInputProps } from '@/types/types';
+
 
 const FormUploadPhoto: FC<FormInputProps> = ({ name, control, label }) => {
-    const [fileName, setFileName] = useState<string>('Upload your photo');
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<FieldValues, string>) => {
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<FieldValues, string>) => {
         const file = event.target.files && event.target.files[0];
         if (file) {
-            setFileName(file.name);
             field.onChange(file);
-        } else {
-            setFileName('Upload your photo');
         }
     };
 
@@ -59,9 +57,9 @@ const FormUploadPhoto: FC<FormInputProps> = ({ name, control, label }) => {
                             width="100%"
                             border="1px solid"
                             borderColor={error ? '#d32f2f' : '#D0CFCF'}
-                            sx={{ borderRadius: '0 4px 4px 0', color: '#7E7E7E' }}
+                            sx={{ borderRadius: '0 4px 4px 0', color: '#7E7E7E', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
                         >
-                            {fileName}
+                            {field.value ? field.value.name : 'Upload your photo'}
                         </Box>
                     </Box>
                     {error ? <Typography textAlign={'left'} variant="body1" color="error">{error.message}</Typography> : null}

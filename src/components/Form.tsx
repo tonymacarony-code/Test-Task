@@ -1,53 +1,22 @@
 'use client'
 
-import React from "react";
-import { Box, Button } from "@mui/material";
-import { useForm } from "react-hook-form";
+import React, { useEffect } from "react";
+import { Box, Button, Typography } from "@mui/material";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FormInputText } from "./FormElements/FormInputText";
 import { FormInputRadio } from "./FormElements/FormInputRadio";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import FormUploadPhoto from "./FormElements/FormUploadPhoto";
-import validator from "validator";
-
-
-function getExtension(filename: string = '') {
-    return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
-}
-
-// Define validation schema using yup
-export const validationSchema = yup.object().shape({
-    Name: yup.string().required().min(2).max(60),
-    Email: yup.string()
-        .email()
-        .required()
-        .test((value) => validator.isEmail(value)),
-    Phone: yup.string()
-        .required()
-        .test((value) => validator.isMobilePhone(value, 'uk-UA')),
-    Position: yup.string()
-        .required()
-        .notOneOf(["", undefined], "Position is required"),
-    Photo: yup.mixed()
-        .test({
-            message: 'Please provide a supported file type',
-            test: (file: any, context) => {
-                const isValid = ['png', 'jpg', 'jpeg'].includes(getExtension(file?.name));
-                console.log(isValid)
-                if (!isValid) context?.createError();
-                return isValid;
-            }
-        })
-
-});
-
-enum Fields {
-    NAME = 'Name',
-    EMAIL = 'Email',
-    PHONE = 'Phone',
-    POSITION = 'Position',
-    PHOTO = 'Photo'
-}
+import { useGetTokenQuery, usePostUserMutation } from "@/app/(redux)/postApi";
+import Loading from "@/app/loading";
+import { validationSchema } from "./FormElements/validation";
+import { Fields } from "@/types/types";
+import * as yup from 'yup'
+import { useGetAllUsersQuery } from "@/app/(redux)/api";
+import { useAppSelector } from "@/app/(redux)/hooks";
+import { selectCurrentPage } from "@/app/(redux)/currentPageSlice";
+import Image from "next/image";
+import successImage from '../app/assets/success-image.png'
 
 
 export const Form = () => {
@@ -56,31 +25,72 @@ export const Form = () => {
         mode: 'onChange',
     });
 
-    // !!!
-    const onSubmit = (data: any) => {
-        console.log('clicked');
-        console.log(data);
+    const [postUser, { isLoading, isSuccess }] = usePostUserMutation();
+    const { refetch: refetchToken } = useGetTokenQuery('');
+
+    const currentPage = useAppSelector(selectCurrentPage)
+    const { refetch } = useGetAllUsersQuery(currentPage);
+
+
+    useEffect(() => {
+        refetchToken();
+    }, [refetchToken]);
+
+
+    const onSubmit: SubmitHandler<{
+        name: string;
+        email: string;
+        phone: string;
+        position_id: number;
+        photo: any;
+    }> = async (payload: yup.InferType<typeof validationSchema> & { photo: Blob }) => {
+        try {
+            const { data: newTokenData } = await refetchToken();
+            const formData = new FormData();
+            if (payload.photo) {
+                formData.append('photo', payload.photo);
+            }
+            formData.append('name', payload.name);
+            formData.append('email', payload.email);
+            formData.append('position_id', String(payload.position_id));
+            formData.append('phone', payload.phone);
+            await postUser({ token: newTokenData.token, payload: formData });
+            refetch()
+        } catch (error) {
+            console.error("Error:", error);
+        }
     };
+
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <>
-            <Box width="100%" display="flex" flexDirection="column" alignItems="center" justifyContent="center" alignSelf="center">
-                <FormInputText name={Fields.NAME} control={control} label={Fields.NAME} />
-                <FormInputText name={Fields.EMAIL} control={control} label={Fields.EMAIL} />
-                <FormInputText name={Fields.PHONE} control={control} label={Fields.PHONE} helperText="+38 (XXX) XXX - XX - XX" />
-                <Box maxWidth="380px" width="100%" display="flex" justifyContent="flex-start">
-                    <FormInputRadio name={Fields.POSITION} control={control} label={Fields.POSITION} />
+            <Typography variant="h1" color="initial">{isSuccess ? 'User successfully registered' : 'Working with POST request'}</Typography>
+            {isSuccess
+                ? <Box mt={12.5} display={'flex'} justifyContent={'center'} alignItems={'center'}><Image width={330} height={290} loading="lazy" src={successImage} alt='successImage' /></Box>
+                :
+                <Box width="100%" display="flex" flexDirection="column" alignItems="center" justifyContent="center" alignSelf="center">
+                    <FormInputText name={Fields.NAME} control={control} label={Fields.NAME} />
+                    <FormInputText name={Fields.EMAIL} control={control} label={Fields.EMAIL} />
+                    <FormInputText name={Fields.PHONE} control={control} label={Fields.PHONE} helperText="+38 (XXX) XXX - XX - XX" />
+                    <Box maxWidth="380px" width="100%" display="flex" justifyContent="flex-start">
+                        <FormInputRadio name={Fields.POSITION_ID} control={control} label={Fields.POSITION} />
+                    </Box>
+                    <FormUploadPhoto name={Fields.PHOTO} control={control} label={Fields.PHOTO} />
+                    <Button
+                        sx={{ marginTop: 12.5 }}
+                        onClick={handleSubmit(onSubmit)}
+                        variant="contained"
+                        disabled={!formState.isValid}
+                    >
+                        Sign up
+                    </Button>
                 </Box>
-                <FormUploadPhoto name={Fields.PHOTO} control={control} label={Fields.PHOTO} />
-                <Button
-                    sx={{ marginTop: 12.5 }}
-                    onClick={handleSubmit(onSubmit)}
-                    variant="contained"
-                    disabled={!formState.isValid}
-                >
-                    Sign up
-                </Button>
-            </Box>
+            }
+
         </>
     );
 };

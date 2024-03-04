@@ -1,24 +1,36 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { BASE_URL, TOKEN } from './constants';
-
-
+import { BASE_URL } from './constants';
 
 export const postApi = createApi({
     reducerPath: 'postApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: `${BASE_URL}/token`,
-        headers: { Authorization: `Bearer ${TOKEN}` },
+        baseUrl: `${BASE_URL}`,
     }),
 
     endpoints: (builder) => ({
-        postUser: builder.mutation({
-            query: (body) => ({
-                url: "users",
-                method: "POST",
-                body,
+        getToken: builder.query({
+            query: () => ({
+                url: '/token',
+                method: 'GET'
             })
+        }),
+
+        postUser: builder.mutation<string, { token: string, payload: any }>({
+
+            queryFn: async ({ token, payload }) => {
+                const result = await fetch(`${BASE_URL}users`, {
+                    method: 'POST',
+                    body: payload,
+                    headers: {
+                        'Token': `${token}`,
+                    },
+                })
+                const data = await result.json();
+                return { data };
+            }
         })
+
     }),
 });
 
-export const { usePostUserMutation } = postApi;
+export const { usePostUserMutation, useGetTokenQuery } = postApi;
