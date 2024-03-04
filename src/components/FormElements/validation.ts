@@ -5,6 +5,13 @@ export const validationSchema = yup.object().shape({
     email: yup.string()
         .email()
         .required()
+        .test("no-dot-in-username", "Email cannot contain a dot (.) in the username before the domain", (value) => {
+            if (typeof value === "string") {
+                const [username, domain] = value.split("@");
+                return !username.includes(".");
+            }
+            return true;
+        })
         .test((value) => validator.isEmail(value)),
     phone: yup.string()
         .required()
@@ -21,7 +28,8 @@ export const validationSchema = yup.object().shape({
                 if (!file) return false;
 
                 // Check file type
-                const isValidType = file.type === 'image/jpeg' || 'image/jpg';
+                const isValidType = file.type === 'image/jpeg';
+
                 if (!isValidType) return false;
 
                 // Check file size
