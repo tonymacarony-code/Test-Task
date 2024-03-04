@@ -1,22 +1,20 @@
-import { AppBar, Box, Button, Container, Stack, Toolbar } from '@mui/material'
-import Image from 'next/image'
-import React, { FC } from 'react'
-import logo from '../app/assets/Logo.svg'
+import React, { FC } from 'react';
+import { AppBar, Box, Button, Container, Stack, Toolbar } from '@mui/material';
+import Image from 'next/image';
+import logo from '../app/assets/Logo.svg';
 
-interface IHeaderProps {
+interface IHeaderProps { }
 
-}
-
-const Header: FC<IHeaderProps> = ({ }) => {
+const Header: FC<IHeaderProps> = () => {
     return (
         <AppBar elevation={0} position="static">
             <Container maxWidth="xl">
                 <Toolbar variant='dense' disableGutters>
                     <Box width={'100%'} display={'flex'} alignItems={'center'} justifyContent={'space-between'}>
-
                         <Image src={logo} loading='lazy' width={104} height={26} alt={'logo'} />
 
                         <Stack direction={'row'} gap={'10px'}>
+                            {/* Navigation Buttons */}
                             <Button variant="contained" color="primary">
                                 Users
                             </Button>
@@ -24,12 +22,11 @@ const Header: FC<IHeaderProps> = ({ }) => {
                                 Sign up
                             </Button>
                         </Stack>
-
                     </Box>
                 </Toolbar>
             </Container>
         </AppBar>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

@@ -15,7 +15,7 @@ export const postApi = createApi({
             })
         }),
 
-        postUser: builder.mutation<string, { token: string, payload: any }>({
+        postUser: builder.mutation<string, { token: string, payload: FormData }>({
 
             queryFn: async ({ token, payload }) => {
                 const result = await fetch(`${BASE_URL}users`, {

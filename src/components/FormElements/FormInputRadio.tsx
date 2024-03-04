@@ -1,4 +1,4 @@
-'use client'
+import React from "react";
 import {
     FormControl,
     FormControlLabel,
@@ -12,18 +12,14 @@ import { useGetPositionsQuery } from "@/app/(redux)/api";
 import { FormInputProps, ISinglePosition } from "@/types/types";
 import Loading from "@/app/loading";
 
-export const FormInputRadio: React.FC<FormInputProps> = ({
-    name,
-    control,
-    label,
-}) => {
-    const { data, isLoading } = useGetPositionsQuery('');
+const FormInputRadio: React.FC<FormInputProps> = ({ name, control, label }) => {
+    const { data, isLoading } = useGetPositionsQuery("");
 
     if (isLoading) {
         return <Loading />;
     }
 
-    const generateRadioOptions = () => {
+    const renderRadioOptions = () => {
         return data?.positions.map((singleOption: ISinglePosition) => (
             <FormControlLabel
                 key={singleOption.id}
@@ -36,16 +32,27 @@ export const FormInputRadio: React.FC<FormInputProps> = ({
     };
 
     return (
-        <FormControl required sx={{ mt: 6.25 }} component="fieldset">
+        <FormControl required sx={{ marginTop: 6.25 }} component="fieldset">
             <Controller
                 name={name}
                 control={control}
-                render={({ field: { onChange, value }, fieldState: { error }, }) => (
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
                     <>
-                        <FormLabel error={!!error} focused={false} sx={{ textAlign: 'left', textTransform: 'capitalize' }} component="legend">{label}</FormLabel>
-                        <RadioGroup value={value || ''} onChange={onChange}>
-                            {generateRadioOptions()}
-                            {error ? <Typography textAlign={'left'} variant='body1' color={'error'}>{error.message}</Typography> : null}
+                        <FormLabel
+                            error={!!error}
+                            focused={false}
+                            sx={{ textAlign: "left", textTransform: "capitalize" }}
+                            component="legend"
+                        >
+                            {label}
+                        </FormLabel>
+                        <RadioGroup value={value || ""} onChange={onChange}>
+                            {renderRadioOptions()}
+                            {error && (
+                                <Typography textAlign="left" variant="body1" color="error">
+                                    {error.message}
+                                </Typography>
+                            )}
                         </RadioGroup>
                     </>
                 )}
@@ -53,3 +60,5 @@ export const FormInputRadio: React.FC<FormInputProps> = ({
         </FormControl>
     );
 };
+
+export default FormInputRadio;

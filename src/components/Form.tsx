@@ -1,49 +1,43 @@
-'use client'
-
+// Importing libraries and components
 import React, { useEffect } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { FormInputText } from "./FormElements/FormInputText";
-import { FormInputRadio } from "./FormElements/FormInputRadio";
 import { yupResolver } from "@hookform/resolvers/yup";
-import FormUploadPhoto from "./FormElements/FormUploadPhoto";
-import { useGetTokenQuery, usePostUserMutation } from "@/app/(redux)/postApi";
+import { useGetAllUsersQuery, api } from "@/app/(redux)/api";
+import { useAppDispatch, useAppSelector } from "@/app/(redux)/hooks";
+import Image from "next/image";
 import Loading from "@/app/loading";
+import successImage from '../app/assets/success-image.png'
+import FormUploadPhoto from "./FormElements/FormUploadPhoto";
 import { validationSchema } from "./FormElements/validation";
 import { Fields } from "@/types/types";
-import * as yup from 'yup'
-import { useGetAllUsersQuery } from "@/app/(redux)/api";
-import { useAppSelector } from "@/app/(redux)/hooks";
 import { selectCurrentPage } from "@/app/(redux)/currentPageSlice";
-import Image from "next/image";
-import successImage from '../app/assets/success-image.png'
+import { useGetTokenQuery, usePostUserMutation } from "@/app/(redux)/postApi";
+import FormInputRadio from "./FormElements/FormInputRadio";
+import FormInputText from "./FormElements/FormInputText";
 
-
+// Main Form component
 export const Form = () => {
+    // Form setup
     const { handleSubmit, control, formState } = useForm({
         resolver: yupResolver(validationSchema),
         mode: 'onChange',
     });
 
+    // Hooks for API operations and state management
     const [postUser, { isLoading, isSuccess }] = usePostUserMutation();
     const { refetch: refetchToken } = useGetTokenQuery('');
-
-    const currentPage = useAppSelector(selectCurrentPage)
+    const currentPage = useAppSelector(selectCurrentPage);
     const { refetch } = useGetAllUsersQuery(currentPage);
+    const dispatch = useAppDispatch();
 
-
+    // Effect hook for token refetching
     useEffect(() => {
         refetchToken();
     }, [refetchToken]);
 
-
-    const onSubmit: SubmitHandler<{
-        name: string;
-        email: string;
-        phone: string;
-        position_id: number;
-        photo: any;
-    }> = async (payload: yup.InferType<typeof validationSchema> & { photo: Blob }) => {
+    // Form submission handler
+    const onSubmit: SubmitHandler<{ name: string; email: string; phone: string; position_id: number; photo: any }> = async (payload) => {
         try {
             const { data: newTokenData } = await refetchToken();
             const formData = new FormData();
@@ -55,23 +49,27 @@ export const Form = () => {
             formData.append('position_id', String(payload.position_id));
             formData.append('phone', payload.phone);
             await postUser({ token: newTokenData.token, payload: formData });
-            refetch()
+            refetch();
+            dispatch(api.util.resetApiState());
         } catch (error) {
             console.error("Error:", error);
         }
     };
 
-
+    // Rendering based on loading state
     if (isLoading) {
         return <Loading />;
     }
 
+
     return (
         <>
             <Typography variant="h1" color="initial">{isSuccess ? 'User successfully registered' : 'Working with POST request'}</Typography>
-            {isSuccess
-                ? <Box mt={12.5} display={'flex'} justifyContent={'center'} alignItems={'center'}><Image width={330} height={290} loading="lazy" src={successImage} alt='successImage' /></Box>
-                :
+            {isSuccess ? (
+                <Box mt={12.5} display="flex" justifyContent="center" alignItems="center">
+                    <Image width={330} height={290} loading="lazy" src={successImage} alt='successImage' />
+                </Box>
+            ) : (
                 <Box width="100%" display="flex" flexDirection="column" alignItems="center" justifyContent="center" alignSelf="center">
                     <FormInputText name={Fields.NAME} control={control} label={Fields.NAME} />
                     <FormInputText name={Fields.EMAIL} control={control} label={Fields.EMAIL} />
@@ -89,8 +87,7 @@ export const Form = () => {
                         Sign up
                     </Button>
                 </Box>
-            }
-
+            )}
         </>
     );
 };

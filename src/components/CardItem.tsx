@@ -1,11 +1,10 @@
-
-import { IUser } from '@/types/types'
-import { Card, Typography, Link, Tooltip } from '@mui/material'
-import Image from 'next/image'
-import React, { FC } from 'react'
+import React, { FC } from 'react';
+import { Card, Typography, Link, Tooltip } from '@mui/material';
+import Image from 'next/image';
+import { IUser } from '@/types/types';
 
 interface ICardProps {
-    user: IUser
+    user: IUser;
 }
 
 const CardItem: FC<ICardProps> = ({ user }) => {
@@ -24,10 +23,9 @@ const CardItem: FC<ICardProps> = ({ user }) => {
                     {user.email}
                 </Link>
             </Tooltip>
-
             <Typography variant="body1" color="initial">{user.phone}</Typography>
         </Card>
-    )
-}
+    );
+};
 
-export default CardItem
+export default CardItem;

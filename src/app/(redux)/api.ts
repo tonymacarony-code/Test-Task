@@ -33,9 +33,6 @@ export const api = createApi({
                 method: 'GET'
             })
         }),
-
-
-
     }),
 });
 

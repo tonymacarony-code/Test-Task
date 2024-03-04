@@ -1,3 +1,2 @@
 export const BASE_URL = 'https://frontend-test-assignment-api.abz.agency/api/v1/'
-export const TOKEN = 'eyJpdiI6ImswZ05qZDc1UUNGSExIWXFSQXluZmc9PSIsInZhbHVlIjoiWHpBcUJDV1lpU0psM21LWmQwc2t5alhLcGFEbEE0NE5rbmZjdlBwb3FJTHVoZFVaNnNZTjJmQStcL3dyWGQxV3Nxemlua0c4NUExUU1CakF6dFRQcXlBPT0iLCJtYWMiOiIxYmNlN2M0NmMzN2VhMjAzOGYxOWEzNjRiYTdhOWRhZTcyYWQzYTMxNzNhODcwZjJjNmU1OTAxNDkyMjI5YWVlIn0='
 export const COUNT_PER_PAGE = 6

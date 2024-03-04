@@ -3,9 +3,7 @@ import { Controller, ControllerRenderProps, FieldValues } from 'react-hook-form'
 import { Box, Button, InputLabel, Typography } from '@mui/material';
 import { FormInputProps } from '@/types/types';
 
-
 const FormUploadPhoto: FC<FormInputProps> = ({ name, control, label }) => {
-
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>, field: ControllerRenderProps<FieldValues, string>) => {
@@ -62,7 +60,7 @@ const FormUploadPhoto: FC<FormInputProps> = ({ name, control, label }) => {
                             {field.value ? field.value.name : 'Upload your photo'}
                         </Box>
                     </Box>
-                    {error ? <Typography textAlign={'left'} variant="body1" color="error">{error.message}</Typography> : null}
+                    {error && <Typography textAlign="left" variant="body1" color="error">{error.message}</Typography>}
                 </>
             )}
         />
