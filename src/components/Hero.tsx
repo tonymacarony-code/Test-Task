@@ -26,7 +26,7 @@ const Hero: FC<IHeroProps> = () => {
                     zIndex={1}
                 />
 
-                <Image sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" src={heroBg} alt='hero' fill loading='lazy' placeholder='blur' style={{ objectFit: 'cover' }} />
+                <Image sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" src={heroBg} alt='hero' fill style={{ objectFit: 'cover' }} />
 
                 <Box maxWidth={'380px'} textAlign={'center'} sx={{ zIndex: 1 }}>
                     <Typography component={'h1'} variant="h1" color="white">Test assignment for front-end developer</Typography>
